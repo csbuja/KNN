@@ -23,6 +23,16 @@ var KNN = function(k,distanceType){
 		return math.squeeze(matrix.subset(math.index([i],_.range(matrix.size()[1]))));
 	}
 
+	var thereexistsanothermax = function(objec,maxkey,value){
+		boooooool = false;
+		_.each(objec,function(v,k){
+			if(v.val == value && v['label']!=maxkey) {
+				boooooool = true;
+			}
+		});
+		
+		return boooooool;
+	}
 
 	var o = {
 		'distance':distanceType,
@@ -113,7 +123,17 @@ var KNN = function(k,distanceType){
 				l.push({'label': key, 'val': c[key]});
 			}
 			// console.log(l);
-			return  _.max(l, function(stooge){ return stooge.val; } )['label'];
+			maxkey = _.max(l, function(stooge){ return stooge.val; } )['label'];
+			maxval = _.max(l, function(stooge){ return stooge.val; } )['val'];
+			if( thereexistsanothermax(l,maxkey,maxval) && this.k>1){
+				this.k -=1;
+				x = this.predict_row(row);
+				this.k +=1;
+				return x;
+			}
+			else{
+				return maxkey;
+			}
 		},
 		'predict' : function(X_test){ 
 			X_test = math.matrix(X_test);
